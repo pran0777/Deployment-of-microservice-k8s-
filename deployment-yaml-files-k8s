@@ -1,0 +1,161 @@
+#Deployment yaml file 
+#This file is for deployment of a microservice,including the number of replicas, container image, ports, and other configurations
+-----------------------------------------
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microservice-name
+  labels:
+    app: microservice-name
+  spec:
+    replicas: 3
+    selector:
+      matchLabels:
+        app: microservice-name
+      template:
+        meatadata:
+          labels:
+            app: microservice-name
+          spec:
+            containers:
+            - name: microservice-container
+              image: microservice-image:latest
+              ports:
+              - containerPort: 80
+              env:
+              - name: ENV_VAR_NAME
+                value: "value"
+
+=========================================
+#Service yaml
+The service that  exposes your microservice, allowing it to be accessed internally or externally within the cluster.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: microservice-name
+spec:
+  selector:
+    app: microservice-name
+  ports:
+    - protocols: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+=========================================
+#Multiple Microservices in one file
+
+---
+apiVersion: appa/v1
+kind: Deployment
+metadata:
+  name: service1
+  labels:
+    app: service1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    meatdata:
+      labels:
+        app: service1
+  spec:
+    containers:
+    - name: service1-container
+      image: service1-image:latest
+      ports:
+      - containerPort: 8080
+
+=============================================
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service1
+  labels:
+    app: service1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service1
+  template:
+    metadata:
+      labels:
+        app: service1
+    spec:
+      containers:
+      - name: service1-container
+        image: service1-image:latest
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service1
+spec:
+  selector:
+    app: service1
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: service2
+  labels:
+    app: service2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: service2
+  template:
+    metadata:
+      labels:
+        app: service2
+    spec:
+      containers:
+      - name: service2-container
+        image: service2-image:latest
+        ports:
+        - containerPort: 8081
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: service2
+spec:
+  selector:
+    app: service2
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8081
+  type: ClusterIP
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
